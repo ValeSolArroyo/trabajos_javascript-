@@ -1,7 +1,5 @@
 // Ejercicio 6: Tabla de Calificaciones (matriz)
 
-const prompt = require('prompt-sync')();
-
 const calificaciones = [
     [8, 7, 9], // Alumno 1
     [6, 9, 7], // Alumno 2
