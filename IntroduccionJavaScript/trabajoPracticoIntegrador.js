@@ -30,7 +30,7 @@ let usuarios = [
 
 // Implementar una función agregarLibro(id, titulo, autor, anio, genero) que agregue un nuevo libro al array libros.function agregarLibro(id, titulo, autor, anio, genero) {
 function agregarLibro(id, titulo, autor, anio, genero) {
-    if (libros.find(libro => libro.id === id)) {
+    if (libros.find(libro => libro.id === id)) { 
         console.log(`El libro con ID ${id} ya existe.`);
     } else {
         libros.push({ id, titulo, autor, anio, genero, disponible: true });
@@ -41,7 +41,13 @@ function agregarLibro(id, titulo, autor, anio, genero) {
 
 // Crear una función buscarLibro(criterio, valor) que permita buscar libros por título, autor o género utilizando el algoritmo de búsqueda lineal.
 function buscarLibro(criterio, valor) {
-    return libros.find(libro => libro[criterio].toLowerCase() === valor.toLowerCase());
+    let libroEncontrado = libros.filter(libro => libro[criterio].toLowerCase() === valor.toLowerCase());  // Buscar el libro por título, autor o género
+    if (libroEncontrado) {
+        console.log(`Libro encontrado:`, libroEncontrado);
+    } else {
+        console.log("Libro no encontrado.");
+    }
+    
 }
 
 // Desarrollar una función ordenarLibros(criterio) que ordene los libros por título o anio utilizando el algoritmo de ordenamiento burbuja (bubble sort) y luego muestre los libros ordenados en la consola.
@@ -64,7 +70,7 @@ function ordenarLibros(criterio) {
 function borrarLibro(id) {
     let index = libros.findIndex(libro => libro.id === id); 
     if (index !== -1) { 
-        libros.splice(index, 1); 
+        libros.splice(index, 1); // Elimina el libro con el ID elegido
         console.log(`Libro con ID ${id} ha sido borrado.`); 
     } else { 
         console.log(`No se encontró un libro con ID ${id}`); 
@@ -86,7 +92,12 @@ function mostrarTodosLosUsarios() {
 
 // Crear una función buscarUsuario(email) que devuelva la información de un usuario dado su email.
 function buscarUsuario(email) {
-    return usuarios.find(usuario => usuario.email === email);
+    let usuarioEncontrado = usuarios.find(usuario => usuario.email === email);
+    if (usuarioEncontrado) {
+        console.log(usuarioEncontrado);
+    } else {
+        console.log("Usuario no encontrado.");
+    }
 }
 
 
@@ -94,7 +105,7 @@ function buscarUsuario(email) {
 function borrarLibroUsuario(nombre, email) {
     let index = usuarios.findIndex(usuario => usuario.nombre === nombre && usuario.email === email);
     if (index!== -1) {
-        usuarios.splice(index, 1);
+        usuarios.splice(index, 1); // Elimina el usuario con el nombre y mail elegido
         console.log(`Usuario ${nombre} con email ${email} ha sido borrado.`);
     } else {
         console.log(`No se encontró un usuario con nombre ${nombre} y email ${email}`);
@@ -108,6 +119,7 @@ function borrarLibroUsuario(nombre, email) {
 function prestarLibro(idLibro, idUsuario) {
     let libro = libros.find(libro => libro.id === idLibro);
     let usuario = usuarios.find(usuario => usuario.id === idUsuario);
+
     if (libro && usuario && libro.disponible) {
         libro.disponible = false;
         usuario.librosPrestados.push(idLibro);
@@ -122,6 +134,7 @@ function devolverLibro(idLibro, idUsuario) {
     let libro = libros.find(libro => libro.id === idLibro);
     let usuario = usuarios.find(usuario => usuario.id === idUsuario);
     let i = libros.filter(libro => libro.id !== id);
+
     if (libro && usuario && index !== -1) {
         libro.disponible = true;
         usuario.librosPrestados.splice(i, 1);
@@ -142,40 +155,36 @@ function devolverLibro(idLibro, idUsuario) {
 
 function generarReporteLibros(){
     let totalLibros = libros.length;
+
     let librosPrestados = libros.filter(libro => !libro.disponible).length;
+
     let librosPorGenero = libros.reduce((acumulador, libro) => {
-        if (acumulador[libro.genero]) {
-            acumulador[libro.genero]++;
+        if (acumulador[libro.genero]) { // Si el género del libro ya existe como clave en el acumulador
+            acumulador[libro.genero]++; // Incrementa el contador de libros para ese género
         } else {
-            acumulador[libro.genero] = 1;
+            acumulador[libro.genero] = 1; // Inicializa el contador para ese género con 1
         }
-        return acumulador;
-    }, {});
-    let libroMasAntiguo = libros.reduce((libroAnterior, libroActual) => {
-        if (libroAnterior.anio > libroActual.anio) {
-            return libroAnterior;
-        } else {
-            return libroActual;
-        }
-    }, {});
-    let libroMasNuevo = libros.reduce((libroActual, libroAntiguo) => {
-        if (libroActual.anio > libroAntiguo.anio) {
-            return libroActual;
-        } else {
-            return libroAntiguo;
-        }
+        return acumulador; // El segundo parámetro es el acumulador inicial, un objeto vacío {}
     }, {});
 
-    console.log(`total libros: ${totalLibros}, libros prestados: ${librosPrestados}, libros por genero: ${librosPorGenero}, libros mas nuevo: ${libroMasNuevo}, libro antiguo: ${libroMasAntiguo}`);
+    let libroMasAntiguo = libros.reduce((libroAnterior, libroActual) =>
+        libroAnterior.anio < libroActual.anio ? libroAnterior : libroActual // Si el año es menor, libroAnterior se mantiene como el valor acumulado.
+    );
 
-    let reporte =  {
+    let libroMasNuevo = libros.reduce((libroAnterior, libroActual) =>
+        libroAnterior.anio > libroActual.anio ? libroAnterior : libroActual // Si el año es mayor, libroActual se mantiene como el valor acumulado.
+    );
+
+    let reporte ={
         totalLibros: totalLibros,
         librosPrestados: librosPrestados,
         librosPorGenero: librosPorGenero,
         libroMasAntiguo: libroMasAntiguo,
         libroMasNuevo: libroMasNuevo
-    };
-    return reporte;
+    }
+    console.log("Reporte de libros:", reporte);
+
+    return reporte
 }
 
 
@@ -184,9 +193,10 @@ function generarReporteLibros(){
 // Implementar una función librosConPalabrasEnTitulo() que identifique y muestre todos los libros cuyo título contiene más de una palabra (no títulos que contengan números ni otros caracteres). La función debe devolver un array con los títulos de esos libros y mostrarlo en la consola.
 function librosConPalabrasEnTitulo() {
     let libroFiltro = libros.filter(libro => {
-        let palabra = libro.titulo.split(" ");
+        let palabra = libro.titulo.split(" "); // Separa por palabras en un array
         return palabra.length > 1;
     });
+
     let titulos = libroFiltro.map(libro => libro.titulo);
     console.log("Libros con más de una palabra en título:", titulos);
 
@@ -207,15 +217,15 @@ function calcularEstadisticas(){
     
     let frecuencias = {};
     for (let libro of libros) {
-        frecuencias[libro.anio] = (frecuencias[libro.anio] || 0) + 1;
+        frecuencias[libro.anio] = (frecuencias[libro.anio] || 0) + 1; // Contador para el año, si existe incrementa, si no, inicia en 0
     };
 
     let añoFrecuente = null;
     let maxFrecuencia = 0;
     for (let anio in frecuencias) {
-        if (frecuencias[anio] > maxFrecuencia) {
-            maxFrecuencia = frecuencias[anio];
-            añoFrecuente = anio;
+        if (frecuencias[anio] > maxFrecuencia) { // Encuentra la frecuencia más alta
+            maxFrecuencia = frecuencias[anio]; // Guarda la frecuencia más alta
+            añoFrecuente = anio; // Guarda el año con la frecuencia más alta
         }
     };
     
@@ -290,11 +300,7 @@ function menuPrincipal() {
             let criterio = prompt("Ingrese el criterio de búsqueda (título, autor, género): ");
             let valor = prompt("Ingrese el valor para buscar: ");
             let libroEncontrado = buscarLibro(criterio, valor);
-            if (libroEncontrado) {
-                console.log(libroEncontrado);
-            } else {
-                console.log("Libro no encontrado.");
-            }
+            
             break;
         case "3":
             let criterioOrdenamiento = prompt("Ingrese el criterio de ordenamiento (título, anio): ");
@@ -317,12 +323,7 @@ function menuPrincipal() {
             break;
         case "7":
             let emailBuscar = prompt("Ingrese el email del usuario a buscar: ");
-            let usuarioEncontrado = buscarUsuario(emailBuscar);
-            if (usuarioEncontrado) {
-                console.log(usuarioEncontrado);
-            } else {
-                console.log("Usuario no encontrado.");
-            }
+            buscarUsuario(emailBuscar);
             break;
         case "8":
             let nombreBorrar = prompt("Ingrese el nombre del usuario a borrar: ");
@@ -358,8 +359,6 @@ function menuPrincipal() {
             break;
         default:
     }
-
-
 }
 
 menuPrincipal();
