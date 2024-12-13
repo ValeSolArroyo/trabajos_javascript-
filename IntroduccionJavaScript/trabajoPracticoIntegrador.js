@@ -299,8 +299,7 @@ function menuPrincipal() {
         case "2":
             let criterio = prompt("Ingrese el criterio de búsqueda (título, autor, género): ");
             let valor = prompt("Ingrese el valor para buscar: ");
-            let libroEncontrado = buscarLibro(criterio, valor);
-            
+            buscarLibro(criterio, valor);
             break;
         case "3":
             let criterioOrdenamiento = prompt("Ingrese el criterio de ordenamiento (título, anio): ");
@@ -340,7 +339,7 @@ function menuPrincipal() {
             break;
         case "10":
             let idLibroDevolver = parseInt(prompt("Ingrese el ID del libro: "));
-            let usuarioDevolver = parseInt(prompt("Ingrese el nombre del usuario: "));
+            let usuarioDevolver = parseInt(prompt("Ingrese el ID del usuario: "));
             devolverLibro(idLibroDevolver, usuarioDevolver);
             break;
         case "11":
